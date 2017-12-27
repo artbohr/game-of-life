@@ -36,9 +36,7 @@ class App extends Component {
     clearInterval(this.cycle);
     let newGrid = this.deepCopy(this.state.grid);
     for (let i = 0; i < this.rows; i++) {
-      if (i===0 || i===29) continue;
       for (let k = 0; k < this.cols; k++) {
-        if (k===0 || k===49) continue;
         if (Math.floor(Math.random() * 5) === 0) newGrid[i][k] = true;
       }
     }
@@ -59,7 +57,7 @@ class App extends Component {
 
   play = () => {
     clearInterval(this.cycle);
-		this.cycle = setInterval(this.game, 300);
+		this.cycle = setInterval(this.game, 500);
   };
 
   stop = () => {
@@ -67,7 +65,6 @@ class App extends Component {
   };
 
   // defines rules and starts the game
-  // this version have the borders made of dead cells
   game = () => {
     let currentGrid = this.state.grid;
     let newGrid = this.deepCopy(this.state.grid);
@@ -76,21 +73,33 @@ class App extends Component {
 
     // iterate through every cell
     for (let i = 0; i < this.rows; i++) {
-      // if row 0 row 29 col 0 col 49 skip cell
-      if (i===0 || i===29) continue;
       for (let k = 0; k < this.cols; k++) {
-        // if row 0 row 29 col 0 col 49 skip cell
-        if (k===0 || k===49) continue;
 
-        // check cells around
-        if (currentGrid[i+1][k]) sum++;
-        if (currentGrid[i-1][k]) sum++;
-        if (currentGrid[i][k+1]) sum++;
-        if (currentGrid[i][k-1]) sum++;
-        if (currentGrid[i-1][k-1]) sum++;
-        if (currentGrid[i+1][k+1]) sum++;
-        if (currentGrid[i-1][k+1]) sum++;
-        if (currentGrid[i+1][k-1]) sum++;
+        // check the grid aroud you, if it's not undefined and alive
+        // sum one live neighbour
+        // else if it's undefined => go to the next
+
+        // error handling method
+        try{if (currentGrid[i+1][k]) sum++} catch(e){};
+        try{if (currentGrid[i-1][k]) sum++} catch(e){};
+        try{if (currentGrid[i][k+1]) sum++} catch(e){};
+        try{if (currentGrid[i][k-1]) sum++} catch(e){};
+        try{if (currentGrid[i-1][k-1]) sum++} catch(e){};
+        try{if (currentGrid[i+1][k+1]) sum++} catch(e){};
+        try{if (currentGrid[i-1][k+1]) sum++} catch(e){};
+        try{if (currentGrid[i+1][k-1]) sum++} catch(e){};
+
+        /*
+        // nested if's method, prevents undefined errors
+        if(i<this.rows-1) {if(currentGrid[i+1][k]) sum++}
+        if(i>0) {if (currentGrid[i-1][k]) sum++}//}
+        if(k<this.cols-1) {if (currentGrid[i][k+1]) sum++}
+        if(k>0) {if (currentGrid[i][k-1]) sum++}
+        if(i>0 && k>0) {if (currentGrid[i-1][k-1]) sum++}
+        if(i<this.rows-1 && k<this.cols-1) {if (currentGrid[i+1][k+1]) sum++}
+        if(i>0 && k<this.cols-1) {if (currentGrid[i-1][k+1]) sum++}
+        if(i<this.rows-1 && k>0) {if (currentGrid[i+1][k-1]) sum++}
+        */
 
         // cell is alive
         if (currentGrid[i][k]){
@@ -118,7 +127,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>Conway's Game of Life</h1>
+        <h1>The Game of Life</h1>
         <div className="buttons">
           <div className="playButtons">
             <button className="myButton" onClick={this.play}>Play</button>
